@@ -13,6 +13,10 @@ class TruthKtTest {
     @get:Rule val expect = Expect.create()
     @get:Rule val expectFailure = ExpectFailure()
 
+    val nullString: String? = null
+    val nullIterable: List<String>? = null
+    val nullAny: Any? = null
+
     @Test
     fun simpleSuccessfulAssertion() {
         "foobarbaz" that {
@@ -84,6 +88,36 @@ class TruthKtTest {
                 hasLength(9)
             }
         }
+    }
+
+    @Test
+    fun assertSupportsNullSubjects() {
+        nullAny that { isNull() }
+        nullIterable that { isNull() }
+        nullString that { isNull() }
+    }
+
+    @Test
+    fun expectSupportsNullSubjects() {
+        expect {
+            nullAny that { isNull() }
+            nullIterable that { isNull() }
+            nullString that { isNull() }
+        }
+    }
+
+    @Test
+    fun expectFailureSupportsNullAnySubjects() {
+        expectFailure { nullAny that { isNotNull() } }
+    }
+
+    @Test
+    fun expectFailureSupportsNullIterableSubjects() {
+        expectFailure { nullIterable that { isNotNull() } } }
+
+    @Test
+    fun expectFailureSupportsNullStringSubjects() {
+        expectFailure { nullString that { isNotNull() } }
     }
 
     private inline fun failOnSuccess(msg: String? = null, init: () -> Unit) {
