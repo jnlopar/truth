@@ -39,6 +39,28 @@ class TruthKtTest {
     }
 
     @Test
+    fun expectFailureMessageUnnamed() {
+        expectFailure {
+            "foobarbaz" that { isEqualTo("fizzbuzz") }
+        }
+        expectFailure withFacts(listOf(
+            "name" to null,
+            "expected" to "fizzbuzz",
+            "but was" to "foobarbaz"))
+    }
+
+    @Test
+    fun expectFailureMessageNamed() {
+        expectFailure {
+            "foobarbaz" that { isNamed("the foo") { isEqualTo("fizzbuzz") } }
+        }
+        expectFailure withFacts(listOf(
+            "name" to "the foo",
+            "expected" to "fizzbuzz",
+            "but was" to "foobarbaz"))
+    }
+
+    @Test
     fun stringCompoundAssertionWithAssertionFail() {
         val string = "foobarbaz"
         string that {

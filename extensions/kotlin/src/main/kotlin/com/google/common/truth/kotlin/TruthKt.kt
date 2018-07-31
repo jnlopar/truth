@@ -65,3 +65,29 @@ sealed class ThatFn {
         this.subject().apply(init)
     }
 }
+
+inline fun <T : Subject<T, U>, U : Any> T.isNamed(name: String, init: T.() -> Unit) {
+    this.named(name).apply(init)
+}
+
+infix fun ExpectFailure.withFacts(entries: List<Pair<String, String?>>) {
+    ExpectFailure.assertThat(failure).apply {
+        for ((key, value) in entries.filter({ (key, value) -> value != null })) {
+            factValue(key).apply {
+                isNamed("fact value for key $key") {
+                    isEqualTo(value ?: "null")
+                }
+            }
+        }
+
+        val nullKeys = entries
+            .filter({ (key, value) -> value == null })
+            .map({ it.first })
+
+        factKeys().apply {
+            isNamed("fact keys") {
+                containsNoneIn(nullKeys)
+            }
+        }
+    }
+}
